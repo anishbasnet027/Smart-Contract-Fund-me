@@ -1,0 +1,106 @@
+{
+	"compiler": {
+		"version": "0.8.16+commit.07a7930e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "fund",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ethAmount",
+						"type": "uint256"
+					}
+				],
+				"name": "getConversionRate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getPrice",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minimumUSD",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Fund_Me.sol": "FundMe"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol": {
+			"keccak256": "0xf2b6c9adb3552254df1445b73563cf014434ff5e78663e9b961b6c059506ceb5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6c1f59e0c7334c22fb54288728fc32546bdc9c8133d6db0d60223e3c28f52120",
+				"dweb:/ipfs/QmeuxawUVBhMWQJXaEhhnubCTc4Jwn5wYK8gbhq6NjrpfG"
+			]
+		},
+		"contracts/Fund_Me.sol": {
+			"keccak256": "0xf570d6c19dfcd0e339703c435f35bc85d69537c7de96ee84b865f28839d1cc18",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1528c63c37e5e0e1966d5ec2158d971e2cad73b8e75ca14144f19c002fee04f2",
+				"dweb:/ipfs/QmYtPzuqj4KbKtXv3aRBPqQf6gcoesHc1fczxo42G2iLjx"
+			]
+		}
+	},
+	"version": 1
+}
