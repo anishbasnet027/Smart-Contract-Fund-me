@@ -1,35 +1,74 @@
-//task :
-//get funds from users 
-//withdraw funds
-//SET A MINIUM FUNDING VALUE IN USD
-
-
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.8;
+
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-pragma solidity >=0.7.0 <0.9.0;
+import "contracts/PriceConverter.sol";
 
 contract FundMe {
+    using PriceConverter for uint256;
 
-    uint256 public minimumUSD  = 50;
-    function  fund() public payable 
-    {
-        //payable keyword makes button red, it indicates the function can reecive or do payments
+    mapping(address => uint256) public addressToAmountFunded;
+    address[] public funders;
 
-        require(msg.value>=minimumUSD,"Minimun required amount not fulfilled"); //1*10**18 wei ==1 ether
-        
-        //address 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
+    // Could we make this constant?  /* hint: no! We should make it immutable! */
+    address public /* immutable */ i_owner;
+    uint256 public constant MINIMUM_USD = 50 * 10 ** 18;
+    
+    constructor() {
+        i_owner = msg.sender;
     }
 
-    function getPrice() public view returns(uint256) {    //gets real time eth to usd value 
-        //ABI
+    function fund() public payable {
+        require(msg.value.getConversionRate() >= MINIMUM_USD, "You need to spend more ETH!");
+        // require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
+        addressToAmountFunded[msg.sender] += msg.value;
+        funders.push(msg.sender);
+    }
+    
+    function getVersion() public view returns (uint256){
         AggregatorV3Interface priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
-        (,int256 price,,,)=priceFeed.latestRoundData();
-        return  uint256(price * 1e10);
+        return priceFeed.version();
+    }
+    
+    modifier onlyOwner {
+        // require(msg.sender == owner);
+        if (msg.sender != i_owner) revert NotOwner();
+        _;
+    }
+    
+    function withdraw() payable onlyOwner public {
+        for (uint256 funderIndex=0; funderIndex < funders.length; funderIndex++){
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+        funders = new address[](0);
+        // // transfer
+        // payable(msg.sender).transfer(address(this).balance);
+        // // send
+        // bool sendSuccess = payable(msg.sender).send(address(this).balance);
+        // require(sendSuccess, "Send failed");
+        // call
+        (bool callSuccess, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "Call failed");
+    }
+    // Explainer from: https://solidity-by-example.org/fallback/
+    // Ether is sent to contract
+    //      is msg.data empty?
+    //          /   \ 
+    //         yes  no
+    //         /     \
+    //    receive()?  fallback() 
+    //     /   \ 
+    //   yes   no
+    //  /        \
+    //receive()  fallback()
+
+    fallback() external payable {
+        fund();
     }
 
-    function getConversionRate(uint256 ethAmount) public view returns (uint256){  //converting given eth to real time usd
-        uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethPrice * ethAmount)/1e18; //remove extra 0 bc in solidity it dont send in decimal value
-        return ethAmountInUsd;
+    receive() external payable {
+        fund();
     }
+
 }
